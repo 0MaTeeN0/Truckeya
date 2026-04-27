@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Truckeya – Tracking & Quotation System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --navy2: #122040;
+    --orange: #f97316;
+    --orange2: #ea6500;
+    --white: #ffffff;
+    --bg: #f8f7f4;
+    --border: #e2ddd6;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--orange); }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+  .tab-btn.active { background: var(--orange); color: var(--white); }
+
+  /* ── MAIN ── */
+  main { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-head { margin-bottom: 2rem; }
+  .section-head h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .section-head p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon {
+    width: 30px; height: 30px;
+    background: var(--navy);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid.full { grid-template-columns: 1fr; }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--orange);
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+
+  /* toggle yes/no */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+  }
+  .toggle-opt {
+    flex: 1;
+    padding: 9px;
+    text-align: center;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+    color: var(--muted);
+    user-select: none;
+  }
+  .toggle-opt.selected-yes { border-color: #15803d; background: #dcfce7; color: #15803d; }
+  .toggle-opt.selected-no { border-color: #b91c1c; background: #fee2e2; color: #b91c1c; }
+
+  /* submit btn */
+  .btn-primary {
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 13px 28px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+  .btn-primary:hover { background: var(--orange2); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+  /* file upload */
+  .file-field {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    background: var(--bg);
+    position: relative;
+  }
+  .file-field:hover { border-color: var(--orange); }
+  .file-field input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .file-field.has-file { border-color: #15803d; color: #15803d; }
+
+  /* ── SUCCESS BOX ── */
+  .success-box {
+    background: var(--success-bg);
+    border: 1.5px solid #86efac;
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    display: none;
+  }
+  .success-box.show { display: block; }
+  .success-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    color: var(--success);
+    margin-bottom: 8px;
+  }
+  .tracking-display {
+    background: var(--navy);
+    color: var(--orange);
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    margin: 12px 0;
+  }
+  .success-box p { font-size: 13px; color: var(--success); }
+
+  /* ── TRACKING PAGE ── */
+  .track-hero {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .track-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .track-hero p { color: rgba(255,255,255,0.55); font-size: 14px; margin-bottom: 1.5rem; }
+
+  .track-input-row {
+    display: flex;
+    gap: 10px;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .track-input-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .track-input-row input::placeholder { color: rgba(255,255,255,0.35); font-weight: 400; letter-spacing: 0; }
+  .track-input-row input:focus { outline: none; border-color: var(--orange); }
+  .btn-track {
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 22px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .btn-track:hover { background: var(--orange2); }
+
+  /* result card */
+  .track-result { display: none; }
+  .track-result.show { display: block; }
+
+  .track-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 500px) { .track-meta { grid-template-columns: 1fr 1fr; } }
+
+  .meta-cell {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+  .meta-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .meta-value { font-size: 14px; font-weight: 600; color: var(--navy); }
+
+  /* timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px; top: 10px; bottom: 10px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-step { position: relative; margin-bottom: 20px; }
+  .tl-step:last-child { margin-bottom: 0; }
+  .tl-dot {
+    position: absolute;
+    left: -22px;
+    top: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--white);
+    z-index: 1;
+  }
+  .tl-step.done .tl-dot { background: var(--orange); border-color: var(--orange); }
+  .tl-step.active .tl-dot { background: var(--navy); border-color: var(--navy); box-shadow: 0 0 0 4px rgba(10,22,40,0.12); }
+  .tl-label { font-size: 14px; font-weight: 600; color: var(--text); }
+  .tl-step.pending .tl-label { color: var(--muted); }
+  .tl-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .not-found {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+    border-radius: var(--radius-sm);
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    color: #92400e;
+    display: none;
+    text-align: center;
+  }
+  .not-found.show { display: block; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 560px) { .steps-row { grid-template-columns: 1fr 1fr; } }
+  .step-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+  }
+  .step-card p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .step-card strong { display: block; font-size: 13px; color: var(--navy); margin-bottom: 3px; }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #1e40af;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  .notice strong { display: block; margin-bottom: 3px; }
+
+  /* separator */
+  .sep { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+  /* spinner */
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+  .spinner.show { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Truck<span>eya</span></div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showPage('quote')">Get Quote</button>
+    <button class="tab-btn" onclick="showPage('track')">Track Shipment</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══════ QUOTE PAGE ══════ -->
+  <div class="page active" id="page-quote">
+
+    <div class="section-head">
+      <h1>Get an Instant Quote</h1>
+      <p>Fill the form below and we'll get back to you instantly.</p>
+    </div>
+
+    <!-- success -->
+    <div class="success-box" id="quote-success">
+      <h2>✓ Quote Submitted!</h2>
+      <p style="margin-bottom:6px;">We will contact you shortly on WhatsApp with your rate. Once you confirm and pay the initial amount, your tracking ID will be assigned.</p>
+      <button class="btn-primary" style="max-width:220px; margin:1rem auto 0;" onclick="resetQuote()">Submit Another Quote</button>
+    </div>
+
+    <div id="quote-form-wrap">
+      <!-- How it works -->
+      <div class="steps-row">
+        <div class="step-card"><div class="step-num">1</div><strong>Fill form</strong><p>Tell us your pickup, drop & service needs</p></div>
+        <div class="step-card"><div class="step-num">2</div><strong>Get rate</strong><p>We contact you on WhatsApp with pricing</p></div>
+        <div class="step-card"><div class="step-num">3</div><strong>Confirm & pay</strong><p>Approve the rate and pay initial amount</p></div>
+        <div class="step-card"><div class="step-num">4</div><strong>Track live</strong><p>Tracking ID assigned after confirmation</p></div>
+      </div>
+
+      <!-- Personal info -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon"><svg width="16" height="16" fill="none" stroke="#f97316" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          Your Information
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>Full Name *</label><input type="text" id="q-name" placeholder="e.g. Ahmed Khan" /></div>
+          <div class="field"><label>Phone / WhatsApp *</label><input type="tel" id="q-phone" placeholder="03XX-XXXXXXX" /></div>
+          <div class="field"><label>City *</label><input type="text" id="q-city" placeholder="e.g. Lahore" /></div>
+          <div class="field"><label>Email (optional)</label><input type="email" id="q-email" placeholder="your@email.com" /></div>
+        </div>
+      </div>
+
+      <!-- Shipment details -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon"><svg width="16" height="16" fill="none" stroke="#f97316" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          Shipment Details
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Service Category *</label>
+            <select id="q-category">
+              <option value="">— Select Category —</option>
+              <option>Household Moving</option>
+              <option>Commercial / B2B Freight</option>
+              <option>Industrial Equipment</option>
+              <option>Perishable / Food Cargo</option>
+              <option>Construction Material</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Truck Type</label>
+            <select id="q-truck">
+              <option value="">- Select Truck -</option>
+              <option>Shehzore (Mini Truck)</option>
+              <option>Mazda (Medium Truck)</option>
+              <option>Shahzore Double Cabin</option>
+              <option>Ravi Pickup</option>
+              <option>Loader Rickshaw</option>
+              <option>Truck (Bedford / Isuzu)</option>
+              <option>Half Body Truck</option>
+              <option>Full Body Truck</option>
+              <option>Container (20ft)</option>
+              <option>Container (40ft)</option>
+              <option>Trailer / Flatbed</option>
+              <option>Reefer (Refrigerated)</option>
+              <option>Not sure - advise me</option>
+            </select>
+          </div>
+          <div class="field"><label>Pickup City *</label><input type="text" id="q-from" placeholder="e.g. Karachi" /></div>
+          <div class="field"><label>Delivery City *</label><input type="text" id="q-to" placeholder="e.g. Islamabad" /></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Packaging Needed?</label>
+            <div class="toggle-group" id="tgl-packing">
+              <div class="toggle-opt" data-val="Yes" onclick="toggleOpt(this,'tgl-packing')">Yes - include packing</div>
+              <div class="toggle-opt" data-val="No" onclick="toggleOpt(this,'tgl-packing')">No - already packed</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Labour / Loading Needed?</label>
+            <div class="toggle-group" id="tgl-labour">
+              <div class="toggle-opt" data-val="Yes" onclick="toggleOpt(this,'tgl-labour')">Yes - include labour</div>
+              <div class="toggle-opt" data-val="No" onclick="toggleOpt(this,'tgl-labour')">No - self loading</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="form-grid full">
+          <div class="field"><label>Additional Details / Message</label><textarea id="q-msg" placeholder="Describe your goods, quantity, special instructions, preferred pickup date, etc."></textarea></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitQuote(this)">
+        <span id="submit-label">Submit Quote & Get Tracking Number →</span>
+        <div class="spinner" id="submit-spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════ TRACK PAGE ══════ -->
+  <div class="page" id="page-track">
+
+    <div class="track-hero">
+      <h1>Track Your Shipment</h1>
+      <p>Enter the tracking number you received after submitting your quote.</p>
+      <div class="track-input-row">
+        <input type="text" id="track-input" placeholder="e.g. TRK-20260426-0001" maxlength="20" />
+        <button class="btn-track" onclick="trackShipment()">Track →</button>
+      </div>
+    </div>
+
+    <div class="not-found" id="track-notfound">
+      Tracking number not found. Please check the ID and try again, or contact us on WhatsApp: <strong>03021223388</strong>
+    </div>
+
+    <div class="track-result" id="track-result">
+      <div class="track-meta" id="track-meta"></div>
+
+      <div class="card">
+        <div class="card-title">Shipment Timeline</div>
+        <div class="timeline" id="track-timeline"></div>
+      </div>
+
+      <div class="notice">
+        Need help? Contact us on <strong>WhatsApp: 03021223388</strong> or email <strong>truckeya.business@gmail.com</strong>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  /* ── PAGE SWITCH ── */
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  /* ── TOGGLE YES/NO ── */
+  function toggleOpt(el, groupId) {
+    const grp = document.getElementById(groupId);
+    grp.querySelectorAll('.toggle-opt').forEach(o => o.className = 'toggle-opt');
+    const isYes = el.dataset.val === 'Yes';
+    el.classList.add(isYes ? 'selected-yes' : 'selected-no');
+  }
+  function getToggle(groupId) {
+    const sel = document.querySelector('#' + groupId + ' .toggle-opt.selected-yes, #' + groupId + ' .toggle-opt.selected-no');
+    return sel ? sel.dataset.val : 'Not specified';
+  }
+
+  /* ── GOOGLE SHEETS SCRIPT URL ── */
+  const SCRIPT_URL = localStorage.getItem('trk_script_url') || 'https://script.google.com/macros/s/AKfycbxPvsf5nXcKiPwPGrYt91PCkxjvCiNbQFMOG3sxMsehAFVYDxyeq__dYY7JT79AYm03PQ/exec';
+
+  /* ── QUOTE SUBMIT ── */
+  function submitQuote(btn) {
+    const name     = document.getElementById('q-name').value.trim();
+    const phone    = document.getElementById('q-phone').value.trim();
+    const city     = document.getElementById('q-city').value.trim();
+    const from     = document.getElementById('q-from').value.trim();
+    const to       = document.getElementById('q-to').value.trim();
+    const category = document.getElementById('q-category').value;
+
+    if (!name || !phone || !city || !from || !to || !category) {
+      alert('Please fill in all required fields (marked with *).');
+      return;
+    }
+
+    const label   = document.getElementById('submit-label');
+    const spinner = document.getElementById('submit-spinner');
+    label.style.display = 'none';
+    spinner.classList.add('show');
+    btn.disabled = true;
+
+    const now     = new Date();
+    const dateStr = now.toLocaleDateString('en-PK', { day:'numeric', month:'short', year:'numeric' });
+    const timeStr = now.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
+
+    const shipment = {
+      name,
+      phone,
+      city,
+      email:    document.getElementById('q-email').value.trim(),
+      category,
+      truck:    document.getElementById('q-truck').value || 'Not specified',
+      from,
+      to,
+      packing:  getToggle('tgl-packing'),
+      labour:   getToggle('tgl-labour'),
+      message:  document.getElementById('q-msg').value.trim(),
+      submittedDate: dateStr,
+      submittedTime: timeStr,
+    };
+
+    /* ── Send to Formspree (→ truckeya.business@gmail.com) ── */
+    const formData = new FormData();
+    formData.append('_subject',        '🚛 New Quote Request - Truckeya');
+    formData.append('Full Name',       shipment.name);
+    formData.append('Phone/WhatsApp',  shipment.phone);
+    formData.append('City',            shipment.city);
+    formData.append('Email',           shipment.email || 'Not provided');
+    formData.append('Service Category',shipment.category);
+    formData.append('Truck Type',      shipment.truck);
+    formData.append('Pickup City',     shipment.from);
+    formData.append('Delivery City',   shipment.to);
+    formData.append('Packaging',       shipment.packing);
+    formData.append('Labour',          shipment.labour);
+    formData.append('Message',         shipment.message || 'N/A');
+    formData.append('Submitted At',    dateStr + ' ' + timeStr);
+
+    fetch('https://formspree.io/f/mwvaygyd', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Formspree error');
+
+      /* ── Show success ── */
+      document.getElementById('quote-form-wrap').style.display = 'none';
+      document.getElementById('quote-success').classList.add('show');
+    })
+    .catch(() => {
+      alert('Something went wrong sending your quote. Please try again or contact us directly on WhatsApp: 03021223388');
+    })
+    .finally(() => {
+      label.style.display = 'inline';
+      spinner.classList.remove('show');
+      btn.disabled = false;
+    });
+  }
+
+  function resetQuote() {
+    document.getElementById('quote-success').classList.remove('show');
+    document.getElementById('quote-form-wrap').style.display = 'block';
+    document.getElementById('q-name').value = '';
+    document.getElementById('q-phone').value = '';
+    document.getElementById('q-city').value = '';
+    document.getElementById('q-email').value = '';
+    document.getElementById('q-category').value = '';
+    document.getElementById('q-truck').value = '';
+    document.getElementById('q-from').value = '';
+    document.getElementById('q-to').value = '';
+    document.getElementById('q-msg').value = '';
+    document.querySelectorAll('.toggle-opt').forEach(o => o.className = 'toggle-opt');
+  }
+
+  /* ── TRACK ── */
+  const STATUS_STEPS = [
+    { label: 'Quote Received',    sub: 'Your quote has been submitted and is under review.' },
+    { label: 'Confirmed & Assigned', sub: 'Driver assigned, truck booked for your shipment.' },
+    { label: 'In Transit',        sub: 'Your goods are on the way to the destination.' },
+    { label: 'Delivered',         sub: 'Shipment delivered successfully.' }
+  ];
+
+  function trackShipment() {
+    const raw      = document.getElementById('track-input').value.trim().toUpperCase();
+    const notFound = document.getElementById('track-notfound');
+    const result   = document.getElementById('track-result');
+    const btn      = document.querySelector('.btn-track');
+
+    notFound.classList.remove('show');
+    result.classList.remove('show');
+    if (!raw) return;
+
+    /* show loading */
+    btn.textContent = 'Searching...';
+    btn.disabled = true;
+
+    if (!SCRIPT_URL || SCRIPT_URL === 'PASTE_YOUR_SCRIPT_URL_HERE') {
+      notFound.innerHTML = 'Tracking system is not set up yet. Please contact us on WhatsApp: <strong>03021223388</strong>';
+      notFound.classList.add('show');
+      btn.textContent = 'Track →'; btn.disabled = false;
+      return;
+    }
+
+    fetch(SCRIPT_URL + '?action=getOne&trackingId=' + raw)
+      .then(r => r.json())
+      .then(data => {
+        btn.textContent = 'Track →'; btn.disabled = false;
+        if (!data.shipment) {
+          notFound.innerHTML = 'Tracking number not found. Please check the ID and try again, or contact us on WhatsApp: <strong>03021223388</strong>';
+          notFound.classList.add('show');
+          return;
+        }
+        showTrackResult(data.shipment);
+      })
+      .catch(() => {
+        btn.textContent = 'Track →'; btn.disabled = false;
+        notFound.innerHTML = 'Could not connect. Please try again or contact us on WhatsApp: <strong>03021223388</strong>';
+        notFound.classList.add('show');
+      });
+  }
+
+  function showTrackResult(data) {
+    const result = document.getElementById('track-result');
+    document.getElementById('track-meta').innerHTML = `
+      <div class="meta-cell"><div class="meta-label">Tracking ID</div><div class="meta-value" style="color:var(--orange);letter-spacing:1px;font-size:13px;">${data.trackingId}</div></div>
+      <div class="meta-cell"><div class="meta-label">Route</div><div class="meta-value">${data.from} → ${data.to}</div></div>
+      <div class="meta-cell"><div class="meta-label">Service</div><div class="meta-value">${data.category}</div></div>
+      <div class="meta-cell"><div class="meta-label">Customer</div><div class="meta-value">${data.name}</div></div>
+      <div class="meta-cell"><div class="meta-label">Date</div><div class="meta-value">${data.submittedDate}</div></div>
+      <div class="meta-cell"><div class="meta-label">Current Status</div><div class="meta-value" style="color:var(--orange);">${data.status}</div></div>
+    `;
+    const si   = Number(data.statusIndex) || 0;
+    const html = STATUS_STEPS.map((s, i) => {
+      let cls = 'tl-step pending';
+      if (i < si) cls = 'tl-step done';
+      if (i === si) cls = 'tl-step active';
+      return `<div class="${cls}"><div class="tl-dot"></div><div class="tl-label">${s.label}</div><div class="tl-sub">${i <= si ? s.sub : 'Pending'}</div></div>`;
+    }).join('');
+    document.getElementById('track-timeline').innerHTML = html;
+    result.classList.add('show');
+  }
+
+  /* enter key */
+  document.getElementById('track-input').addEventListener('keydown', e => { if(e.key==='Enter') trackShipment(); });
+</script>
+</body>
+</html>

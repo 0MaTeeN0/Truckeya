@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Truckeya – Admin Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  :root {
+    --navy:#0a1628; --orange:#f97316; --orange2:#ea6500;
+    --white:#ffffff; --bg:#f8f7f4; --border:#e2ddd6;
+    --text:#1a1a2e; --muted:#6b7280; --radius:12px; --radius-sm:8px;
+    --green:#15803d; --green-bg:#dcfce7; --red:#b91c1c;
+    --amber:#92400e; --amber-bg:#fef3c7; --blue:#1e40af; --blue-bg:#dbeafe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* LOGIN */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);}
+  .login-box{background:var(--white);border-radius:var(--radius);padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+  .logo span{color:var(--orange);}
+  .sub{font-size:12px;color:var(--muted);margin-bottom:1.75rem;text-transform:uppercase;letter-spacing:0.08em;}
+  .login-box input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);margin-bottom:10px;}
+  .login-box input:focus{outline:none;border-color:var(--orange);}
+  .err{font-size:12px;color:var(--red);margin-bottom:8px;display:none;}
+  .err.show{display:block;}
+
+  /* APP */
+  #app{display:none;}
+  nav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+  .nav-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+  .nav-logo span{color:var(--orange);}
+  .nav-right{display:flex;align-items:center;gap:12px;}
+  .nav-badge{font-size:11px;background:rgba(249,115,22,0.2);color:var(--orange);padding:4px 10px;border-radius:20px;font-weight:600;}
+  .btn-logout{background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);font-size:13px;padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-logout:hover{background:rgba(255,255,255,0.15);color:var(--white);}
+
+  main{max-width:980px;margin:0 auto;padding:2rem 1.5rem;}
+
+  /* STATS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+  @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}}
+  .stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;}
+  .stat-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--navy);}
+  .stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* TABS */
+  .tabs{display:flex;gap:4px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;margin-bottom:1.75rem;width:fit-content;}
+  .tab{background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--muted);padding:8px 20px;border-radius:6px;cursor:pointer;transition:all 0.15s;}
+  .tab.active{background:var(--navy);color:var(--white);}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* CARD */
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.25rem;}
+  .card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--navy);margin-bottom:1.25rem;}
+
+  /* FORM */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+  @media(max-width:600px){.form-grid,.form-grid.three{grid-template-columns:1fr;}}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em;}
+  .field input,.field select{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);transition:border-color 0.2s;width:100%;}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--orange);}
+  .sep{height:1px;background:var(--border);margin:1.25rem 0;}
+  .mt{margin-top:1rem;}
+
+  /* BUTTONS */
+  .btn{border:none;border-radius:var(--radius-sm);padding:11px 24px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .btn-orange{background:var(--orange);color:var(--white);}
+  .btn-orange:hover{background:var(--orange2);}
+  .btn-orange:disabled{background:#ccc;cursor:not-allowed;}
+  .btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border);font-family:'Inter',sans-serif;font-size:13px;padding:8px 16px;}
+  .btn-ghost:hover{border-color:var(--orange);color:var(--orange);}
+
+  /* TRACKING RESULT BOX */
+  .trk-box{background:var(--navy);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;display:none;margin-top:1.25rem;}
+  .trk-box.show{display:block;}
+  .trk-label{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;}
+  .trk-id{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--orange);letter-spacing:3px;margin-bottom:14px;}
+  .trk-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .trk-copy{background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);color:var(--orange);border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .trk-copy:hover{background:rgba(249,115,22,0.3);}
+  .trk-wa{background:#25d366;color:white;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .trk-hint{font-size:12px;color:rgba(255,255,255,0.35);margin-top:12px;}
+
+  /* TABLE */
+  .search-row{display:flex;gap:10px;margin-bottom:1.25rem;}
+  .search-row input{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);}
+  .search-row input:focus{outline:none;border-color:var(--orange);}
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{background:var(--navy);color:rgba(255,255,255,0.65);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;}
+  thead th:first-child{border-radius:8px 0 0 8px;}
+  thead th:last-child{border-radius:0 8px 8px 0;}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:hover{background:#faf9f7;}
+  tbody td{padding:12px 14px;vertical-align:middle;}
+  .trk-cell{font-family:'Syne',sans-serif;font-size:12px;color:var(--orange);font-weight:700;letter-spacing:1px;}
+  .empty-state{text-align:center;padding:3rem;color:var(--muted);font-size:14px;}
+
+  /* STATUS */
+  .status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .s-quote{background:var(--blue-bg);color:var(--blue);}
+  .s-confirm{background:var(--amber-bg);color:var(--amber);}
+  .s-transit{background:#ede9fe;color:#5b21b6;}
+  .s-delivered{background:var(--green-bg);color:var(--green);}
+  .status-select{font-size:12px;border:1px solid var(--border);border-radius:6px;padding:5px 8px;background:var(--bg);color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;}
+
+  /* LOADING */
+  .loading-row{text-align:center;padding:2rem;color:var(--muted);font-size:13px;}
+  .spinner-sm{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* NOTICE */
+  .notice{background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:#1e40af;margin-bottom:1.5rem;line-height:1.5;}
+  .notice strong{display:block;margin-bottom:3px;}
+  .notice code{background:#dbeafe;padding:2px 6px;border-radius:4px;font-size:12px;word-break:break-all;}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;z-index:999;}
+  #toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="logo">Truck<span>eya</span></div>
+    <div class="sub">Admin Panel</div>
+    <input type="text" id="login-user" placeholder="Username" />
+    <input type="password" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <div class="err" id="login-err">Wrong username or password.</div>
+    <button class="btn btn-orange" style="width:100%;margin-top:4px;" onclick="doLogin()">Login →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav>
+    <div class="nav-logo">Truck<span>eya</span> <span style="font-size:12px;color:rgba(255,255,255,0.4);font-family:Inter,sans-serif;font-weight:400;">Admin</span></div>
+    <div class="nav-right">
+      <div class="nav-badge">🔒 Private</div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total Shipments</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-transit" style="color:#5b21b6">—</div><div class="stat-label">In Transit</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-delivered" style="color:var(--green)">—</div><div class="stat-label">Delivered</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-pending" style="color:var(--orange)">—</div><div class="stat-label">Pending / Confirmed</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('generate',this)">Generate Tracking ID</button>
+      <button class="tab" onclick="switchTab('shipments',this)">All Shipments</button>
+      <button class="tab" onclick="switchTab('setup',this)">⚙ Setup</button>
+    </div>
+
+    <!-- TAB: GENERATE -->
+    <div class="page active" id="tab-generate">
+      <div class="card">
+        <div class="card-title">New Shipment — Customer Details</div>
+        <div class="form-grid">
+          <div class="field"><label>Customer Name *</label><input type="text" id="g-name" placeholder="e.g. Ahmed Khan" /></div>
+          <div class="field"><label>Phone / WhatsApp *</label><input type="tel" id="g-phone" placeholder="03XX-XXXXXXX" /></div>
+          <div class="field"><label>City</label><input type="text" id="g-city" placeholder="e.g. Lahore" /></div>
+          <div class="field"><label>Initial Payment (PKR)</label><input type="number" id="g-payment" placeholder="e.g. 5000" /></div>
+        </div>
+        <div class="sep"></div>
+        <div class="card-title" style="margin-bottom:1rem;">Shipment Details</div>
+        <div class="form-grid three">
+          <div class="field">
+            <label>Service Category</label>
+            <select id="g-category">
+              <option value="">- Select -</option>
+              <option>Household Moving</option>
+              <option>Commercial / B2B Freight</option>
+              <option>Industrial Equipment</option>
+              <option>Perishable / Food Cargo</option>
+              <option>Construction Material</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Truck Type</label>
+            <select id="g-truck">
+              <option value="">- Select -</option>
+              <option>Loader Rickshaw</option>
+              <option>Ravi Pickup</option>
+              <option>Shehzore (Mini Truck)</option>
+              <option>Mazda (Medium Truck)</option>
+              <option>Shahzore Double Cabin</option>
+              <option>Truck (Bedford / Isuzu)</option>
+              <option>Half Body Truck</option>
+              <option>Full Body Truck</option>
+              <option>Container (20ft)</option>
+              <option>Container (40ft)</option>
+              <option>Trailer / Flatbed</option>
+              <option>Reefer (Refrigerated)</option>
+            </select>
+          </div>
+          <div class="field"><label>Notes</label><input type="text" id="g-notes" placeholder="any special info" /></div>
+        </div>
+        <div class="form-grid mt">
+          <div class="field"><label>Pickup City *</label><input type="text" id="g-from" placeholder="e.g. Karachi" /></div>
+          <div class="field"><label>Delivery City *</label><input type="text" id="g-to" placeholder="e.g. Islamabad" /></div>
+        </div>
+        <div style="margin-top:1.25rem;">
+          <button class="btn btn-orange" id="generate-btn" onclick="generateID()">Generate Tracking ID →</button>
+        </div>
+        <div class="trk-box" id="trk-result">
+          <div class="trk-label">Tracking ID Generated & Saved to Google Sheets ✓</div>
+          <div class="trk-id" id="trk-id-display">TRK-00000000-0000</div>
+          <div class="trk-actions">
+            <button class="trk-copy" onclick="copyID()">📋 Copy ID</button>
+            <button class="trk-wa" onclick="sendWA()">💬 Send to Customer on WhatsApp</button>
+          </div>
+          <div class="trk-hint">Customer can now use this ID to track their shipment on your website.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: ALL SHIPMENTS -->
+    <div class="page" id="tab-shipments">
+      <div class="search-row">
+        <input type="text" id="search-input" placeholder="Search by name, phone, tracking ID, city..." oninput="filterTable()" />
+        <button class="btn-ghost" onclick="document.getElementById('search-input').value='';filterTable()">Clear</button>
+        <button class="btn-ghost" onclick="loadShipments()">↻ Refresh</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tracking ID</th>
+                <th>Customer</th>
+                <th>Route</th>
+                <th>Truck</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Update Status</th>
+                <th>WA</th>
+              </tr>
+            </thead>
+            <tbody id="shipments-tbody">
+              <tr><td colspan="9" class="loading-row"><span class="spinner-sm"></span>Loading shipments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: SETUP -->
+    <div class="page" id="tab-setup">
+      <div class="card">
+        <div class="card-title">⚙ Google Sheets Setup</div>
+        <div class="notice">
+          <strong>Paste your Google Apps Script URL below to connect the database.</strong>
+          Without this, tracking data will only save locally on this device.
+        </div>
+        <div class="field" style="margin-bottom:1rem;">
+          <label>Google Apps Script Web App URL</label>
+          <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/XXXXXXXX/exec" />
+        </div>
+        <button class="btn btn-orange" onclick="saveScriptUrl()">Save & Connect →</button>
+        <div id="url-saved" style="display:none;margin-top:12px;font-size:13px;color:var(--green);">✓ URL saved! Tracking data will now sync with Google Sheets.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">How to set up Google Sheets (5 steps)</div>
+        <div style="font-size:13px;color:var(--muted);line-height:2;">
+          <div>1. Go to <strong style="color:var(--navy)">sheets.google.com</strong> → Create new sheet → Name it <strong style="color:var(--navy)">"Truckeya Shipments"</strong></div>
+          <div>2. Click <strong style="color:var(--navy)">Extensions → Apps Script</strong> → Delete existing code → Paste the script from the <code style="background:var(--bg);padding:2px 6px;border-radius:4px;">truckeya-google-script.js</code> file</div>
+          <div>3. Click <strong style="color:var(--navy)">Deploy → New Deployment → Web App</strong></div>
+          <div>4. Set <strong style="color:var(--navy)">"Who has access" → Anyone</strong> → Click Deploy → Authorize</div>
+          <div>5. Copy the URL → Paste it above → Click Save & Connect</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Login Credentials</div>
+        <div style="font-size:13px;color:var(--muted);line-height:2;">
+          <div>Username: <strong style="color:var(--navy)">truckeya</strong> / <strong style="color:var(--navy)">tashfeen</strong> / <strong style="color:var(--navy)">zain</strong> / <strong style="color:var(--navy)">mateen</strong></div>
+          <div>Password: <strong style="color:var(--navy)">trk@2026</strong></div>
+          <div style="margin-top:8px;font-size:12px;">To change password, open this file and find the CREDS object in the script section.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  /* ══ CONFIG — paste your Google Apps Script URL here or via Setup tab ══ */
+  let SCRIPT_URL = localStorage.getItem('trk_script_url') || 'https://script.google.com/macros/s/AKfycbxPvsf5nXcKiPwPGrYt91PCkxjvCiNbQFMOG3sxMsehAFVYDxyeq__dYY7JT79AYm03PQ/exec';
+
+  /* ══ CREDENTIALS ══ */
+  const CREDS = { truckeya:'trk@2026', tashfeen:'trk@2026', zain:'trk@2026', mateen:'trk@2026' };
+
+  /* ══ AUTH ══ */
+  function doLogin() {
+    const u = document.getElementById('login-user').value.trim().toLowerCase();
+    const p = document.getElementById('login-pass').value;
+    if (CREDS[u] && CREDS[u] === p) {
+      sessionStorage.setItem('trk_auth','1');
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadShipments();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+  }
+  function doLogout() { sessionStorage.removeItem('trk_auth'); location.reload(); }
+  if (sessionStorage.getItem('trk_auth')) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadShipments();
+  }
+
+  /* ══ SETUP ══ */
+  function saveScriptUrl() {
+    const url = document.getElementById('script-url-input').value.trim();
+    if (!url.startsWith('https://script.google.com')) {
+      alert('Please paste a valid Google Apps Script URL.');
+      return;
+    }
+    SCRIPT_URL = url;
+    localStorage.setItem('trk_script_url', url);
+    document.getElementById('url-saved').style.display = 'block';
+    showToast('Google Sheets connected ✓');
+    loadShipments();
+  }
+
+  /* ══ TABS ══ */
+  function switchTab(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-'+id).classList.add('active');
+    el.classList.add('active');
+    if (id === 'shipments') loadShipments();
+    if (id === 'setup') {
+      const saved = localStorage.getItem('trk_script_url');
+      if (saved) document.getElementById('script-url-input').value = saved;
+    }
+  }
+
+  /* ══ API HELPERS ══ */
+  function apiGet(params) {
+    const q = new URLSearchParams(params).toString();
+    return fetch(SCRIPT_URL + '?' + q).then(r => r.json());
+  }
+  function apiPost(body) {
+    return fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(r => r.json());
+  }
+
+  /* ══ ALL SHIPMENTS (from Google Sheets) ══ */
+  let allRows = [];
+
+  function loadShipments() {
+    const tbody = document.getElementById('shipments-tbody');
+    tbody.innerHTML = '<tr><td colspan="9" class="loading-row"><span class="spinner-sm"></span>Loading from Google Sheets...</td></tr>';
+
+    if (!SCRIPT_URL || SCRIPT_URL === 'PASTE_YOUR_SCRIPT_URL_HERE') {
+      tbody.innerHTML = '<tr><td colspan="9" class="empty-state">⚙ Please set up your Google Sheets URL in the Setup tab first.</td></tr>';
+      updateStats([]);
+      return;
+    }
+
+    apiGet({ action: 'getAll' })
+      .then(data => {
+        allRows = data.shipments || [];
+        renderTable(allRows);
+        updateStats(allRows);
+      })
+      .catch(() => {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Could not connect to Google Sheets. Check your URL in the Setup tab.</td></tr>';
+      });
+  }
+
+  function filterTable() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const filtered = allRows.filter(s =>
+      !q ||
+      (s.trackingId||'').toLowerCase().includes(q) ||
+      (s.name||'').toLowerCase().includes(q) ||
+      (s.phone||'').toLowerCase().includes(q) ||
+      (s.from||'').toLowerCase().includes(q) ||
+      (s.to||'').toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+  }
+
+  const STATUS_MAP = {
+    'Quote Received': { cls:'s-quote',     label:'Quote Received' },
+    'Confirmed':      { cls:'s-confirm',   label:'Confirmed' },
+    'In Transit':     { cls:'s-transit',   label:'In Transit' },
+    'Delivered':      { cls:'s-delivered', label:'Delivered' },
+  };
+  const STATUS_LIST = ['Quote Received','Confirmed','In Transit','Delivered'];
+  const STATUS_IDX  = {'Quote Received':0,'Confirmed':1,'In Transit':2,'Delivered':3};
+
+  function renderTable(rows) {
+    const tbody = document.getElementById('shipments-tbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No shipments found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(s => {
+      const st   = STATUS_MAP[s.status] || STATUS_MAP['Quote Received'];
+      const opts = STATUS_LIST.map(sl =>
+        `<option value="${sl}" ${s.status===sl?'selected':''}>${sl}</option>`
+      ).join('');
+      const raw   = (s.phone||'').replace(/\D/g,'');
+      const waNum = raw.startsWith('0') ? '92'+raw.slice(1) : raw;
+      return `
+        <tr>
+          <td class="trk-cell">${s.trackingId}</td>
+          <td><div style="font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.phone}</div></td>
+          <td>${s.from} → ${s.to}</td>
+          <td style="font-size:12px;color:var(--muted)">${s.truck||'-'}</td>
+          <td style="font-size:12px;color:var(--muted)">PKR ${s.payment||'-'}</td>
+          <td style="font-size:12px;color:var(--muted)">${s.submittedDate||'-'}</td>
+          <td><span class="status-badge ${st.cls}">${st.label}</span></td>
+          <td><select class="status-select" onchange="updateStatus('${s.trackingId}',this.value)">${opts}</select></td>
+          <td><a href="https://wa.me/${waNum}" target="_blank" style="font-size:20px;text-decoration:none;">💬</a></td>
+        </tr>`;
+    }).join('');
+  }
+
+  function updateStatus(id, newStatus) {
+    apiPost({ action:'updateStatus', trackingId:id, status:newStatus, statusIndex:STATUS_IDX[newStatus]||0 })
+      .then(data => {
+        if (data.success) {
+          showToast('Status updated → ' + newStatus);
+          loadShipments();
+        }
+      })
+      .catch(() => showToast('Error updating status. Check connection.'));
+  }
+
+  function updateStats(rows) {
+    document.getElementById('st-total').textContent     = rows.length;
+    document.getElementById('st-transit').textContent   = rows.filter(s=>s.status==='In Transit').length;
+    document.getElementById('st-delivered').textContent = rows.filter(s=>s.status==='Delivered').length;
+    document.getElementById('st-pending').textContent   = rows.filter(s=>s.status==='Quote Received'||s.status==='Confirmed').length;
+  }
+
+  /* ══ GENERATE TRACKING ID ══ */
+  let lastGenerated = null;
+
+  function generateID() {
+    const name  = document.getElementById('g-name').value.trim();
+    const phone = document.getElementById('g-phone').value.trim();
+    const from  = document.getElementById('g-from').value.trim();
+    const to    = document.getElementById('g-to').value.trim();
+    if (!name||!phone||!from||!to) { alert('Please fill: Customer Name, Phone, Pickup City, Delivery City.'); return; }
+
+    if (!SCRIPT_URL || SCRIPT_URL==='PASTE_YOUR_SCRIPT_URL_HERE') {
+      alert('Please set up your Google Sheets URL in the Setup tab first.');
+      return;
+    }
+
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true; btn.textContent = 'Saving to Google Sheets...';
+
+    const now      = new Date();
+    const datePart = now.toISOString().slice(0,10).replace(/-/g,'');
+    const seq      = String(Math.floor(Math.random()*9000)+1000);
+    const id       = 'TRK-'+datePart+'-'+seq;
+    const dateStr  = now.toLocaleDateString('en-PK',{day:'numeric',month:'short',year:'numeric'});
+    const timeStr  = now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'});
+
+    const shipment = {
+      trackingId:id, name, phone,
+      city:     document.getElementById('g-city').value.trim(),
+      category: document.getElementById('g-category').value||'Not specified',
+      truck:    document.getElementById('g-truck').value||'Not specified',
+      from, to,
+      payment:  document.getElementById('g-payment').value||'',
+      notes:    document.getElementById('g-notes').value.trim(),
+      submittedDate:dateStr, submittedTime:timeStr,
+      status:'Confirmed', statusIndex:1
+    };
+
+    apiPost({ action:'save', shipment })
+      .then(data => {
+        if (data.success) {
+          lastGenerated = shipment;
+          document.getElementById('trk-id-display').textContent = id;
+          document.getElementById('trk-result').classList.add('show');
+          showToast('Saved to Google Sheets ✓');
+        } else {
+          alert('Error saving. Please try again.');
+        }
+      })
+      .catch(() => alert('Could not connect to Google Sheets. Check your URL in Setup tab.'))
+      .finally(() => { btn.disabled=false; btn.textContent='Generate Tracking ID →'; });
+  }
+
+  function copyID() {
+    navigator.clipboard.writeText(document.getElementById('trk-id-display').textContent)
+      .then(()=>showToast('Copied!'));
+  }
+
+  function sendWA() {
+    if (!lastGenerated) return;
+    const s = lastGenerated;
+    const msg = encodeURIComponent(
+      '🚛 *Truckeya - Shipment Confirmed*\n\n'+
+      'Dear '+s.name+',\n\n'+
+      'Your shipment has been confirmed. Here is your tracking ID:\n\n'+
+      '📋 *Tracking ID:* '+s.trackingId+'\n'+
+      '📍 *From:* '+s.from+'\n'+
+      '📍 *To:* '+s.to+'\n'+
+      '🚚 *Truck:* '+s.truck+'\n\n'+
+      'Use this ID to track your shipment anytime on our website.\n\n'+
+      'Thank you for choosing Truckeya 🙏\n'+
+      'Contact: 03021223388'
+    );
+    const raw   = s.phone.replace(/\D/g,'');
+    const waNum = raw.startsWith('0') ? '92'+raw.slice(1) : raw;
+    window.open('https://wa.me/'+waNum+'?text='+msg,'_blank');
+  }
+
+  /* ══ TOAST ══ */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  }
+</script>
+</body>
+</html>
