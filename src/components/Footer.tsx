@@ -60,7 +60,6 @@ const Footer = () => {
                   {link.label}
                 </Link>
               ))}
-              <a href="/truckeya-admin.html" className="transition-colors hover:text-[#f97316]" style={{ color: '#94a3b8' }}>Admin Panel</a>
             </nav>
           </div>
         </div>
