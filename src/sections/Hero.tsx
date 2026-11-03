@@ -66,8 +66,8 @@ const Hero = () => {
               Get Free Quote
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/team" className="btn-secondary">
-              Meet Our Team
+            <Link to="/track" className="btn-primary">
+              Track Shipment
             </Link>
           </div>
 
