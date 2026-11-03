@@ -96,20 +96,7 @@ const QuotePage = () => {
     } catch (err) {
       console.error('Formspree error:', err)
     }
-
-    // WhatsApp
-    const whatsappMsg = `*New Quote Request - Truckeya*
-
-*Name:* ${formData.name}
-*Phone:* ${formData.phone}
-*Pickup City:* ${formData.pickup}
-*Delivery City:* ${formData.dropoff}
-*Truck Type:* ${formData.category}
-*Packaging:* ${packagingText}
-*Labour:* ${labourText}
-*Message:* ${formData.message || 'N/A'}`
-
-    window.open(`https://wa.me/923021223388?text=${encodeURIComponent(whatsappMsg)}`, '_blank')
+    try { await fetch('https://formspree.io/f/xvkkvjrr', { method: 'POST', body: formPayload, headers: { Accept: 'application/json' } }) } catch (err) { console.error('Formspree error (2):', err) }
 
     setIsSubmitting(false)
     setIsSubmitted(true)
