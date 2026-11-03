@@ -52,7 +52,6 @@ const Footer = () => {
                 { label: 'Home', href: '/' },
                 { label: 'Get Quote', href: '/quote' },
       { label: 'Track Shipment', href: '/track' },
-                { label: 'Core Team', href: '/team' },
                 { label: 'Join as Driver', href: '/#driver' },
                 { label: 'Our Fleet', href: '/#fleet' },
               ].map((link) => (
