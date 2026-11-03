@@ -51,6 +51,7 @@ const Footer = () => {
               {[
                 { label: 'Home', href: '/' },
                 { label: 'Get Quote', href: '/quote' },
+      { label: 'Track Shipment', href: '/track' },
                 { label: 'Core Team', href: '/team' },
                 { label: 'Join as Driver', href: '/#driver' },
                 { label: 'Our Fleet', href: '/#fleet' },
@@ -59,6 +60,7 @@ const Footer = () => {
                   {link.label}
                 </Link>
               ))}
+              <a href="/truckeya-admin.html" className="transition-colors hover:text-[#f97316]" style={{ color: '#94a3b8' }}>Admin Panel</a>
             </nav>
           </div>
         </div>
