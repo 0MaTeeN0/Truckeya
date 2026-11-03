@@ -34,8 +34,7 @@ const DriverOnboarding = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const msg = `*New Driver Application - Truckeya*%0A%0A*Name:* ${formData.name}%0A*Phone:* ${formData.phone}%0A*City:* ${formData.city}%0A*Vehicle Type:* ${formData.vehicleType}%0A*Vehicle Number:* ${formData.vehicleNumber}%0A%0ADocuments needed: CNIC Front & Back, Vehicle Photo, Driving License`
-    window.open(`https://wa.me/923021223388?text=${msg}`, '_blank')
+    const fd = new FormData(); fd.append('Full Name', formData.name); fd.append('Phone/WhatsApp', formData.phone); fd.append('City', formData.city); fd.append('Vehicle Type', formData.vehicleType); fd.append('Vehicle Number', formData.vehicleNumber); fd.append('_subject', 'New Driver Application - Truckeya'); fetch('https://formspree.io/f/xkjjplbr', { method: 'POST', body: fd, headers: { Accept: 'application/json' } }).catch((err) => console.error('Formspree error:', err))
     setIsSubmitted(true)
     setTimeout(() => setIsSubmitted(false), 5000)
   }
