@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Search, MapPin, Truck } from 'lucide-react'
 
 // Paste the Google Apps Script web app URL (ends with /exec) between the quotes below
-const TRACKING_API = ''
+const TRACKING_API = 'https://script.google.com/macros/s/AKfycbytP37ayLAeB2fqu8U-XWVBKbHlmThUURe4qdJ4asRAaAoNvJDmO8kkn1g-qcIwRBuh/exec'
 
 const CITIES: Record<string, [number, number]> = {
 'karachi': [24.8607, 67.0011],
