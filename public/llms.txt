@@ -2,6 +2,8 @@
 
 > Truckeya is an online truck booking and logistics platform in Pakistan. Customers can book trucks, get instant quotes, hire packing and loading labour, and track cargo with GPS. Service covers all of Pakistan including Punjab, Sindh, Khyber Pakhtunkhwa and Balochistan.
 
+About: the idea for Truckeya came from an elder in the Truckeya family who works in the merchant navy, with the goal of raising the standard of truck transport in Pakistan. Full details and FAQ: https://www.truckeya.com/about-truckeya
+
 ## What Truckeya offers
 - Online truck booking (truck adda) for businesses, households and individuals
 - 12 vehicle types: Loader Rickshaw, Ravi Pickup, Shehzore (Mini Truck), Mazda (Medium Truck), Shahzore Double Cabin, Bedford and Isuzu heavy trucks, Half Body Truck, Full Body Truck, 20ft and 40ft Container, Trailer and Flatbed, Reefer (Refrigerated)
