@@ -136,15 +136,39 @@ setError('Could not load tracking details. Please try again in a moment.')
 setLoading(false)
 }
 
+const geoCache: Record<string, [number, number] | null> = {}
+const geocode = async (city: string): Promise<[number, number] | null> => {
+const key = (city || '').trim().toLowerCase()
+if (!key) return null
+const known = coords(city)
+if (known) return known
+if (key in geoCache) return geoCache[key]
+let found: [number, number] | null = null
+try {
+const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=pk&q=' + encodeURIComponent(city + ', Pakistan'))
+const data = await res.json()
+if (data && data[0]) found = [parseFloat(data[0].lat), parseFloat(data[0].lon)]
+} catch {
+found = null
+}
+geoCache[key] = found
+return found
+}
+
+const pin = (L: any, color: string, label: string) => L.divIcon({
+className: '',
+html: '<div style="position:relative;width:34px;height:44px"><svg width="34" height="44" viewBox="0 0 34 44"><path d="M17 1C8 1 1 8 1 17c0 12 16 26 16 26s16-14 16-26C33 8 26 1 17 1z" fill="' + color + '" stroke="#ffffff" stroke-width="2"/><circle cx="17" cy="17" r="9" fill="#ffffff"/></svg><div style="position:absolute;top:7px;left:0;width:34px;text-align:center;font-size:13px;font-weight:700;line-height:20px;color:#0a1628">' + label + '</div></div>',
+iconSize: [34, 44],
+iconAnchor: [17, 44],
+tooltipAnchor: [0, -40],
+})
+
 useEffect(() => {
 if (!shipment || !mapEl.current) return
 let map: any = null
 let cancelled = false
-const from = coords(shipment.from)
-const to = coords(shipment.to)
-const cur = coords(shipment.current)
-loadLeaflet()
-.then((L) => {
+Promise.all([loadLeaflet(), geocode(shipment.from), geocode(shipment.to), geocode(shipment.current)])
+.then(([L, from, to, cur]) => {
 if (cancelled || !mapEl.current) return
 const points = [from, cur, to].filter(Boolean) as [number, number][]
 if (points.length === 0) return
@@ -152,10 +176,11 @@ map = L.map(mapEl.current, { scrollWheelZoom: false })
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap contributors' }).addTo(map)
 if (from && to) L.polyline([from, to], { color: '#94a3b8', weight: 3, dashArray: '8 8' }).addTo(map)
 if (from && cur) L.polyline([from, cur], { color: '#f97316', weight: 5 }).addTo(map)
-if (from) L.circleMarker(from, { radius: 8, color: '#ffffff', weight: 2, fillColor: '#16a34a', fillOpacity: 1 }).addTo(map).bindTooltip('Start: ' + shipment.from)
-if (to) L.circleMarker(to, { radius: 8, color: '#ffffff', weight: 2, fillColor: '#dc2626', fillOpacity: 1 }).addTo(map).bindTooltip('Destination: ' + shipment.to)
-if (cur) L.circleMarker(cur, { radius: 11, color: '#ffffff', weight: 3, fillColor: '#f97316', fillOpacity: 1 }).addTo(map).bindTooltip('Truck now: ' + shipment.current)
-map.fitBounds(points, { padding: [40, 40], maxZoom: 9 })
+if (from) L.marker(from, { icon: pin(L, '#16a34a', 'A') }).addTo(map).bindTooltip('Start: ' + shipment.from)
+if (to) L.marker(to, { icon: pin(L, '#dc2626', 'B') }).addTo(map).bindTooltip('Destination: ' + shipment.to)
+if (cur) L.marker(cur, { icon: pin(L, '#f97316', '&#128666;'), zIndexOffset: 1000 }).addTo(map).bindTooltip('Truck now: ' + shipment.current)
+if (points.length === 1) map.setView(points[0], 9)
+else map.fitBounds(points, { padding: [50, 50], maxZoom: 9 })
 })
 .catch(() => {})
 return () => {
