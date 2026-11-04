@@ -127,7 +127,7 @@ Get Free Quote
 <div key={g}>
 <h3 className="font-heading text-lg font-semibold mb-3" style={{ color: '#ffffff' }}>{groupTitles[g]}</h3>
 <nav className="flex flex-col gap-2">
-{seoPages.filter((p) => p.group === g && p.slug !== page.slug).map((p) => (
+{seoPages.filter((p) => (g === 'service' ? ['packing-services-pakistan', 'loading-unloading-services-pakistan', 'all-truck-types-pakistan', 'live-cargo-tracking-pakistan', 'cargo-insurance-pakistan', 'on-time-truck-delivery-pakistan'].includes(p.slug) : p.group === g) && p.slug !== page.slug).map((p) => (
 <Link key={p.slug} to={'/' + p.slug} className="text-sm transition-colors hover:text-[#f97316]" style={{ color: '#94a3b8' }}>
 {p.navLabel}
 </Link>

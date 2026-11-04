@@ -75,6 +75,7 @@ Tell us what you're shipping and where. We'll reply with a quote within hours.
 { label: 'Track Shipment', href: '/track' },
 { label: 'Join as Driver', href: '/#driver' },
 { label: 'Our Fleet', href: '/#fleet' },
+  { label: 'About Truckeya', href: '/about-truckeya' },
 ].map((link) => (
 <Link key={link.label} to={link.href} className="transition-colors hover:text-[#f97316]" style={{ color: '#94a3b8' }}>
 {link.label}
@@ -89,7 +90,7 @@ Tell us what you're shipping and where. We'll reply with a quote within hours.
 <div key={g.key}>
 <h3 className="font-heading text-base font-semibold mb-4" style={{ color: '#ffffff' }}>{g.title}</h3>
 <nav className="flex flex-col gap-2">
-{seoPages.filter((p) => p.group === g.key).map((p) => (
+{seoPages.filter((p) => (g.key === 'service' ? ['packing-services-pakistan', 'loading-unloading-services-pakistan', 'all-truck-types-pakistan', 'live-cargo-tracking-pakistan', 'cargo-insurance-pakistan', 'on-time-truck-delivery-pakistan'].includes(p.slug) : p.group === g.key)).map((p) => (
 <Link key={p.slug} to={'/' + p.slug} className="text-sm transition-colors hover:text-[#f97316]" style={{ color: '#94a3b8' }}>
 {p.navLabel}
 </Link>
