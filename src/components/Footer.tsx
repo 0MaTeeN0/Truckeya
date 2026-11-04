@@ -1,4 +1,4 @@
-Fix syntax error in footer componeimport type { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, Mail, Linkedin, MapPin } from 'lucide-react'
 import { InstagramIcon, FacebookIcon } from './SocialIcons'
@@ -109,4 +109,3 @@ Tell us what you're shipping and where. We'll reply with a quote within hours.
 }
 
 export default Footer
-nt style attribute.
