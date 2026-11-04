@@ -2,7 +2,7 @@
 
 > Truckeya is an online truck booking and logistics platform in Pakistan. Customers can book trucks, get instant quotes, hire packing and loading labour, and track cargo with GPS. Service covers all of Pakistan including Punjab, Sindh, Khyber Pakhtunkhwa and Balochistan.
 
-About: the idea for Truckeya came from an elder in the Truckeya family who works in the merchant navy, with the goal of raising the standard of truck transport in Pakistan. Full details and FAQ: https://www.truckeya.com/about-truckeya
+About: Truckeya was started by a Navigation Officer in the merchant navy who has 5 years of experience in domestic logistics in Pakistan. He built it to fix common truck booking problems such as unclear prices, middlemen, no cargo updates and damaged goods. Full details and FAQ: https://www.truckeya.com/about-truckeya
 
 ## What Truckeya offers
 - Online truck booking (truck adda) for businesses, households and individuals
