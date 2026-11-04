@@ -260,7 +260,7 @@ updated: string
 note: string; name?: string; customer?: string
 }
 
-const STEPS = ['Booked', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered']
+const STEPS = ['Booked', 'Picked Up', 'In Transit', 'Delivered']
 
 const coords = (city: string): [number, number] | null => CITIES[(city || '').split(',')[0].replace(/\./g, '').replace(/\s+city$/i, '').replace(/\s+/g, ' ').trim().toLowerCase()] || null
 
@@ -268,7 +268,8 @@ const stepIndex = (status: string) => {
 const s = (status || '').toLowerCase()
 const i = STEPS.findIndex((x) => x.toLowerCase() === s)
 if (i >= 0) return i
-if (s.includes('deliver')) return 4
+if (s.includes('out for')) return 2
+  if (s.includes('deliver')) return 3
 if (s.includes('transit') || s.includes('reach')) return 2
 if (s.includes('pick') || s.includes('load')) return 1
 return 0
@@ -421,7 +422,7 @@ Back to Home
 <span className="px-4 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: 'rgba(249,115,22,0.15)', color: '#f97316' }}>{shipment.status}</span>
 </div>
 
-<div className="grid grid-cols-5 gap-2 mb-8">
+<div className="grid grid-cols-4 gap-2 mb-8">
 {STEPS.map((s, i) => (
 <div key={s} className="text-center">
 <div className="h-2 rounded-full mb-2" style={{ backgroundColor: i <= active ? '#f97316' : 'rgba(255,255,255,0.1)' }} />
