@@ -64,7 +64,7 @@ truck: string
 status: string
 current: string
 updated: string
-note: string
+note: string; name?: string; customer?: string
 }
 
 const STEPS = ['Booked', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered']
@@ -213,6 +213,7 @@ Back to Home
 </div>
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {(shipment.name || shipment.customer) && (<div><p className="text-xs uppercase" style={{ color: '#94a3b8' }}>Booked by</p><p style={{ color: '#ffffff' }}>{shipment.name || shipment.customer}</p></div>)}
 <div className="flex items-start gap-3">
 <MapPin className="w-5 h-5 mt-0.5" style={{ color: '#16a34a' }} />
 <div>
