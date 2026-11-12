@@ -34,7 +34,7 @@ const Hero = () => {
       <div className="absolute inset-0">
         {landmarks.map((lm, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
-            <img src={lm.image} alt={lm.name} className="w-full h-full object-cover" />
+            <img fetchPriority={i === 0 ? 'high' : 'low'} decoding="async" src={lm.image} alt={lm.name} className="w-full h-full object-cover" />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,22,40,0.92), rgba(10,22,40,0.55) 65%, rgba(10,22,40,0.35))' }} />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0a1628, transparent 40%, rgba(10,22,40,0.3))' }} />
           </div>
