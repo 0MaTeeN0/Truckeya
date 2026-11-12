@@ -47,7 +47,7 @@ const Fleet = () => {
           {trucks.map((t, i) => (
             <div key={i} className="fleet-card group rounded-2xl overflow-hidden transition-all duration-500" style={{ backgroundColor: 'rgba(15,31,53,0.6)', border: '1px solid rgba(255,255,255,0.05)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'}>
               <div className="relative h-44 overflow-hidden">
-                <img loading="lazy" decoding="async" src={`/_vercel/image?url=${encodeURIComponent(t.image)}&w=640&q=75`} alt={t.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img loading="lazy" decoding="async" src={t.image} alt={t.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(15,31,53,1), transparent)' }} />
                 <div className="absolute top-3 left-3">
                   <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: '#f97316', color: '#ffffff' }}>from {t.price}</span>
