@@ -53,7 +53,7 @@ const Header = () => {
       <div className="w-full section-padding">
         <div className="flex items-center justify-between h-20 lg:h-24">
           <Link to="/" className="flex items-center gap-3 group z-10">
-            <div className="relative overflow-hidden rounded-xl bg-white h-16 w-36 lg:h-20 lg:w-44 shadow-lg"><img src="/images/logo_new.png" alt="Truckeya" className="absolute max-w-none" style={{ width: '140%', left: '-16%', top: '-41%' }} /></div>
+            <div className="relative overflow-hidden rounded-xl bg-white h-16 w-36 lg:h-20 lg:w-44 shadow-lg"><img fetchPriority="high" decoding="async" src="/images/logo_new.png" alt="Truckeya" className="absolute max-w-none" style={{ width: '140%', left: '-16%', top: '-41%' }} /></div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">
