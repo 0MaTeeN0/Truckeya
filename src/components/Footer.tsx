@@ -102,7 +102,7 @@ Tell us what you're shipping and where. We'll reply with a quote within hours.
 
 <div className="mt-16 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
 <p style={{ color: '#94a3b8' }} className="text-sm">&copy; 2026 Truckeya. All rights reserved.</p>
-<img loading="lazy" decoding="async" src="/images/logo_new.png" alt="Truckeya" className="h-10 w-auto opacity-60" />
+<img loading="lazy" decoding="async" src="/cdn-cgi/image/width=256,quality=80,format=auto/images/logo_new.png" alt="Truckeya" className="h-10 w-auto opacity-60" />
 </div>
 </div>
 </footer>
