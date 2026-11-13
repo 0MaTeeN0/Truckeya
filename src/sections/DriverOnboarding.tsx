@@ -82,7 +82,7 @@ const DriverOnboarding = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: '#94a3b8' }}>Vehicle Type</label>
-                      <select value={formData.vehicleType} onChange={e => setFormData({ ...formData, vehicleType: e.target.value })} className="w-full px-4 py-3 rounded-xl text-white focus:outline-none transition-colors" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }} required
+                      <select aria-label="Vehicle type" value={formData.vehicleType} onChange={e => setFormData({ ...formData, vehicleType: e.target.value })} className="w-full px-4 py-3 rounded-xl text-white focus:outline-none transition-colors" style={{ backgroundColor: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }} required
                         onFocus={e => e.currentTarget.style.borderColor = '#f97316'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}>
                         <option value="">Select vehicle type</option>
                         {vehicleTypes.map(t => <option key={t} value={t}>{t}</option>)}
