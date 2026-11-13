@@ -22,6 +22,7 @@ const Header = () => {
     { label: 'Our Fleet', href: '/#fleet' },
     { label: 'Get Quote', href: '/quote' },
     { label: 'Track Shipment', href: '/track' },
+    { label: 'Blog', href: '/blog' },
     { label: 'Join as Driver', href: '/#driver' },
     { label: 'Contact', href: '/#contact' },
   ]
