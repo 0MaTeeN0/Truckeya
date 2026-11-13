@@ -13,6 +13,7 @@ const landmarks = [
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [seen, setSeen] = useState(0)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,8 +26,8 @@ const Hero = () => {
   }, [])
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentSlide((p) => (p + 1) % landmarks.length), 5000)
-    return () => clearInterval(interval)
+    const t = setTimeout(() => setSeen((s) => Math.max(s, 1)), 2500); const interval = setInterval(() => { setCurrentSlide((p) => (p + 1) % landmarks.length); setSeen((s) => Math.min(s + 1, landmarks.length - 1)) }, 5000)
+    return () => { clearTimeout(t); clearInterval(interval) }
   }, [])
 
   return (
@@ -34,7 +35,7 @@ const Hero = () => {
       <div className="absolute inset-0">
         {landmarks.map((lm, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
-            <img fetchPriority={i === 0 ? 'high' : 'low'} decoding="async" src={`/cdn-cgi/image/width=1920,quality=70,format=auto${lm.image}`} alt={lm.name} className="w-full h-full object-cover" />
+            {i <= seen && <img fetchPriority={i === 0 ? 'high' : 'low'} decoding="async" width={1920} height={1080} sizes="100vw" srcSet={[640, 1080, 1920].map((w) => `/cdn-cgi/image/width=${w},quality=70,format=auto${lm.image} ${w}w`).join(', ')} src={`/cdn-cgi/image/width=1080,quality=70,format=auto${lm.image}`} alt={lm.name} className="w-full h-full object-cover" />}
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,22,40,0.92), rgba(10,22,40,0.55) 65%, rgba(10,22,40,0.35))' }} />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0a1628, transparent 40%, rgba(10,22,40,0.3))' }} />
           </div>
@@ -92,7 +93,7 @@ const Hero = () => {
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
           {landmarks.map((_, i) => (
-            <button key={i} onClick={() => setCurrentSlide(i)}
+            <button key={i} aria-label={'Show ' + landmarks[i].name} onClick={() => { setCurrentSlide(i); setSeen((s) => Math.max(s, i)) }}
               className="h-2 rounded-full transition-all duration-300"
               style={{ width: i === currentSlide ? 32 : 8, backgroundColor: i === currentSlide ? '#f97316' : 'rgba(255,255,255,0.3)' }} />
           ))}
