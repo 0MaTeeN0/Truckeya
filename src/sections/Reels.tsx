@@ -19,6 +19,7 @@ const Reels = () => {
 const sectionRef = useRef<HTMLDivElement>(null)
 const trackRef = useRef<HTMLDivElement>(null)
 const [active, setActive] = useState(0)
+  const [playing, setPlaying] = useState('')
 
 useEffect(() => {
 const ctx = gsap.context(() => {
@@ -75,14 +76,7 @@ key={r.id}
 className="reel-card rounded-2xl overflow-hidden flex-none"
 style={{ width: 360, maxWidth: '85vw', scrollSnapAlign: 'center', backgroundColor: '#ffffff', border: '1px solid rgba(255,255,255,0.08)' }}
 >
-<iframe
-src={'https://www.instagram.com/reel/' + r.id + '/embed'}
-title={r.title}
-loading="lazy"
-allowFullScreen
-className="w-full block"
-style={{ height: 760, border: 0, backgroundColor: '#ffffff' }}
-/>
+  {playing === r.id ? <iframe src={'https://www.instagram.com/reel/' + r.id + '/embed'} title={r.title} allowFullScreen className="w-full block" style={{ height: 760, border: 0, backgroundColor: '#ffffff' }} /> : <button type="button" onClick={() => setPlaying(r.id)} aria-label={'Play video: ' + r.title} className="w-full block" style={{ height: 760, border: 0, cursor: 'pointer', color: '#ffffff', fontSize: 22, fontWeight: 700, padding: 32, lineHeight: 1.4, background: 'linear-gradient(160deg, #f97316 0%, #1e3a5f 55%, #0f1f35 100%)' }} children={'\u25B6  ' + r.title} />}
 </div>
 ))}
 </div>
