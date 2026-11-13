@@ -9,6 +9,7 @@ const QuotePage = lazy(() => import('./pages/QuotePage'))
 const TrackPage = lazy(() => import('./pages/TrackPage'))
 const BlogIndex = lazy(() => import('./pages/BlogIndex'))
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
+const NewsPage = lazy(() => import('./pages/NewsPage'))
 
 const homeLd = [
 {
@@ -67,7 +68,7 @@ path="/track"
 }
 />
   <Route path="/blog" element={<BlogIndex />} />
-  <Route path="/blog/:slug" element={<BlogPostPage />} />
+  <Route path="/blog/:slug" element={<BlogPostPage />} /><Route path="/news" element={<NewsPage />} />
 {seoPages.map((p) => (
 <Route key={p.slug} path={'/' + p.slug} element={<SeoPage page={p} />} />
 ))}
