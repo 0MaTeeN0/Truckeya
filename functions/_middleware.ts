@@ -23,10 +23,11 @@ export const onRequest = async (context: any) => {
   const meta = PAGES.get(path)
   if (!meta) return context.next()
   const res = await context.next()
-  if (!(res.headers.get("content-type") || "").includes("text/html")) return res
+  // Only rewrite normal full pages. 304 (not modified), redirects and errors pass through as they are.
+  if (res.status !== 200 || !(res.headers.get("content-type") || "").includes("text/html")) return res
   const url = SITE_URL + path
   const Rewriter = (globalThis as any).HTMLRewriter
-  return new Rewriter()
+  const out = new Rewriter()
   .on("head > title", { element: (e: any) => { e.setInnerContent(meta.title) } })
   .on("meta[name=description]", setAttr("content", meta.description))
   .on("link[rel=canonical]", setAttr("href", url))
@@ -36,4 +37,8 @@ export const onRequest = async (context: any) => {
   .on("meta[name='twitter:title']", setAttr("content", meta.title))
   .on("meta[name='twitter:description']", setAttr("content", meta.description))
   .transform(res)
+  // The page content is now different from the shared index.html, so drop its cache tag.
+  const headers = new Headers(out.headers)
+  headers.delete("etag")
+  return new Response(out.body, { status: 200, headers })
 }
