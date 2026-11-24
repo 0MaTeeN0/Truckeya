@@ -11,6 +11,7 @@ const PAGES = new Map<string, Meta>()
 PAGES.set("/quote", { title: "Get a Free Truck Quote in Pakistan | Truckeya", description: "Request a free truck quote in minutes. Enter your pickup, drop and cargo details and Truckeya will reply with a price for trucks anywhere in Pakistan." })
 PAGES.set("/track", { title: "Track Your Shipment | Truckeya Pakistan", description: "Track your cargo with Truckeya. Enter your tracking details to see the status of your truck booking anywhere in Pakistan." })
 PAGES.set("/blog", { title: "Truckeya Blog | Logistics, Trade Routes and Trucking in Pakistan", description: "Guides and updates on trucking in Pakistan: trade routes with China, Afghanistan and Iran, seasonal road conditions, freight rates and shipping tips." })
+PAGES.set("/news", { title: "Pakistan Logistics News | Fuel, Borders, Ports and Roads | Truckeya", description: "Latest logistics and trade headlines from Pakistan: fuel prices, Torkham and Chaman border trade, Karachi and Gwadar ports, motorway closures and trucking news, updated through the day." })
 for (const p of seoPages) PAGES.set("/" + p.slug, { title: p.title, description: p.description })
 for (const b of blogPosts) PAGES.set("/blog/" + b.slug, { title: b.title + " | Truckeya", description: b.description })
 
